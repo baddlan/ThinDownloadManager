@@ -54,7 +54,7 @@ public class DownloadRequestQueue {
 		public void postDownloadComplete(final DownloadRequest request) {
 			mCallBackExecutor.execute(new Runnable() {
 				public void run() {
-					request.getDownloadListener().onDownloadComplete(request.getDownloadId());
+					request.getDownloadListener().onDownloadComplete(request.getDownloadId(), request.getDestinationURI());
 				}
 			});
 		}

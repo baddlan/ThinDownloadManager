@@ -80,7 +80,11 @@ public class DownloadDispatcher extends Thread {
                 mRedirectionCount = 0;
                 Log.v(TAG, "Download initiated for " + mRequest.getDownloadId());
                 updateDownloadState(DownloadManager.STATUS_STARTED);
-                executeDownload(mRequest.getUri().toString());
+				if (isAlreadyDownloaded()) {
+					updateDownloadComplete();
+				} else {
+					executeDownload(mRequest.getUri().toString());
+				}
     		} catch (InterruptedException e) {
                 // We may have been interrupted because it was time to quit.
                 if (mQuit) {
@@ -346,6 +350,23 @@ public class DownloadDispatcher extends Thread {
             destinationFile.delete();
         }
     }
+    
+	/**
+     * 
+     */
+	private boolean isAlreadyDownloaded() {
+		File destinationFile = new File(mRequest.getDestinationURI().toString());
+		if (destinationFile.exists()) {
+			String existHash = HashTool.encodeMD5(destinationFile);
+			if (existHash != null && existHash.equals(mRequest.getDestinationMd5())) {
+				// hit
+				Log.d(TAG, "fileHash hit " + destinationFile);
+				return true;
+			}
+		}
+
+		return false;
+	}
 
     public void updateDownloadState(int state) {
         mRequest.setDownloadState(state);

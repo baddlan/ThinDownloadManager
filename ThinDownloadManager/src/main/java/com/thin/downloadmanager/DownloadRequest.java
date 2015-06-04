@@ -24,6 +24,11 @@ public class DownloadRequest implements Comparable<DownloadRequest> {
     private Uri mDestinationURI;
 
     private RetryPolicy mRetryPolicy;
+	/**
+	 * Option parameter, used to skip download if the same file is already
+	 * downloaded.
+	 */
+	private String mDestinationHash;
 
     /** Whether or not this request has been canceled. */
     private boolean mCanceled = false;
@@ -152,7 +157,22 @@ public class DownloadRequest implements Comparable<DownloadRequest> {
         return this;
 	}
 
-    //Package-private methods.
+	/**
+	 * Set md5 so that download manager could skip download if the request file
+	 * is already exist
+	 * 
+	 * @param hash
+	 */
+	public DownloadRequest setDestinationHash(String hash) {
+		mDestinationHash = hash;
+		return this;
+	}
+
+	public String getDestinationMd5() {
+		return mDestinationHash;
+	}
+
+	// Package-private methods.
 
     /**
      * Mark this request as canceled.  No callback will be delivered.
